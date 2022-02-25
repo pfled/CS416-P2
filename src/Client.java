@@ -3,6 +3,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 //import java.util.Random;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Client {
@@ -127,17 +128,16 @@ public class Client {
                     //Receive server reply code (F or S)
                     if(serverCode(channel).equals("S")){
                         System.out.println("File exists. Sending.");
+                        File newFile = new File(fileNameG);
+                        channel.read(buffer);
+                        String fileContent = StandardCharsets.UTF_8.decode(buffer).toString();
                         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileNameG));
+                        bufferedWriter.write(fileContent);
 
                     } else {
                         System.out.println("The request was rejected by the server.");
                     }
 
-                    File newFile = new File(fileNameG);
-
-
-
-                    channel.read(buffer);
                     channel.close();
                     //Ask the user for the file name
                     //Notify the user whether the operation is successful

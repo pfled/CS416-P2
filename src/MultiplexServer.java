@@ -150,23 +150,26 @@ public class MultiplexServer {
 
                             File fileG = new File(fileNameG);
 
+                            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileNameG));
+
                             //Client sends filename, check if it exists
                                 //If not, send "F"
                                 //If it does, send "S"
                             if(fileG.exists()){
                                 sendReplyCode(serveChannel, "S");
+                                while ((bufferedReader.readLine())!=null){
+                                    String textLine = bufferedReader.readLine() + "/n";
+                                    buffer = ByteBuffer.wrap(textLine.getBytes());
+                                    serveChannel.write(buffer);
+                                }
                             } else {
                                 sendReplyCode(serveChannel, "F");
                             }
 
                             //Send file, user should be able to open it
-                            BufferedReader bufferedReader = new BufferedReader(new FileReader(fileNameG));
 
-                            while ((bufferedReader.readLine())!=null){
-                                String textLine = bufferedReader.readLine() + "/n";
-                                buffer = ByteBuffer.wrap(textLine.getBytes());
-                                serveChannel.write(buffer);
-                            }
+
+
 
                             serveChannel.close();
                             break;
