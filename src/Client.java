@@ -111,6 +111,7 @@ public class Client {
                     //Ask user for filename
                     System.out.println("Enter the file you'd like to receive: ");
                     String fileNameG = keyboard.nextLine();
+                    BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileNameG));
 
                     //Create TCP channel and connect to server
                     channel = SocketChannel.open();
@@ -128,11 +129,19 @@ public class Client {
                     //Receive server reply code (F or S)
                     if(serverCode(channel).equals("S")){
                         System.out.println("File exists. Sending.");
-                        File newFile = new File(fileNameG);
-                        channel.read(buffer);
-                        String fileContent = StandardCharsets.UTF_8.decode(buffer).toString();
-                        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileNameG));
-                        bufferedWriter.write(fileContent);
+                        ByteBuffer data = ByteBuffer.allocate(1024);
+                        while( (bytesRead = channel.read(data)) != -1) {
+                            //before reading from buffer, flip buffer
+                            //("limit" set to current position, "position" set to zero)
+                            data.flip();
+                            byte[] a = new byte[bytesRead];
+                            //copy bytes from buffer to array
+                            //(all bytes between "position" and "limit" are copied)
+                            data.get(a);
+                            String fileContent = new String(a);
+                            bufferedWriter.write(fileContent);
+                        }
+                        bufferedWriter.close();
 
                     } else {
                         System.out.println("The request was rejected by the server.");

@@ -157,8 +157,8 @@ public class MultiplexServer {
                                 //If it does, send "S"
                             if(fileG.exists()){
                                 sendReplyCode(serveChannel, "S");
-                                while ((bufferedReader.readLine())!=null){
-                                    String textLine = bufferedReader.readLine() + "/n";
+                                String textLine;
+                                while ((textLine = bufferedReader.readLine())!=null){
                                     buffer = ByteBuffer.wrap(textLine.getBytes());
                                     serveChannel.write(buffer);
                                 }
@@ -167,9 +167,6 @@ public class MultiplexServer {
                             }
 
                             //Send file, user should be able to open it
-
-
-
 
                             serveChannel.close();
                             break;
