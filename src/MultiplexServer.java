@@ -8,6 +8,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -157,9 +158,9 @@ public class MultiplexServer {
                                 //If it does, send "S"
                             if(fileG.exists()){
                                 sendReplyCode(serveChannel, "S");
-                                String textLine;
+                                String textLine = "";
                                 while ((textLine = bufferedReader.readLine())!=null){
-                                    buffer = ByteBuffer.wrap(textLine.getBytes());
+                                    buffer = ByteBuffer.wrap((textLine + "\n").getBytes());
                                     serveChannel.write(buffer);
                                 }
                             } else {
